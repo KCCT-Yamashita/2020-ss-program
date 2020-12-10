@@ -16,3 +16,4 @@
 　　(参考：https://www.slideshare.net/mobile/LinaKatayose/raspberry-pi-193128334
 　　　　　 https://www.tohuandkonsome.site/entry/2017/08/24/101259)
 　　もし回転速度を変更する場合は、可変抵抗などを用いる必要がある
+test
