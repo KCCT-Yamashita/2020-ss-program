@@ -13,7 +13,7 @@ pin11, pin12, pin13 = 29, 31, 30
 pin21, pin22, pin23 = 8, 10, 9
 
 # いろんな変数の定義
-Input1, Input2 = 0, 0
+Input1, Input2, Input3 = 0, 0, 0
 V1, V2 = 0, 0
 Record1, Record2 = 0, 0
 Phase1, Phase2 = 0, 0
