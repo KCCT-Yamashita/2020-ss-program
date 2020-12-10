@@ -9,7 +9,7 @@ screen = pygame.display.set_mode((400, 330))# 画面を作成
 pygame.display.set_caption("keyboard event")# タイトルを作成
 
 # モータードライバーを接続したGPIOピンの定義(1:GPIO 2:GPIO 3:GND)
-pin11, pin12, pin13 = 29, 31, 30
+pin11, pin12, pin13 = 33, 35, 34
 pin21, pin22, pin23 = 8, 10, 9
 
 # いろんな変数の定義
