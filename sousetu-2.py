@@ -43,7 +43,7 @@ def pwmOutput(start, stop, step, sleep, pwm):
         time.sleep(sleep)
 
 # programスタート
-print("start")
+print("Start")
 
 #キーボードで操作
 try:
