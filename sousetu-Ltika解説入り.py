@@ -1,4 +1,4 @@
-〇種々の関数の宣言
+#〇種々の関数の宣言
 import RPi.GPIO as GPIO
 import time
 from pygame.locals import *
@@ -38,11 +38,11 @@ GPIO.output(pin22, GPIO.LOW)
 GPIO.setmode(GPIO.BCM)
 yellow = LED(3)
 
-〇各ピンのPWMの出力の大きさを決める
+#〇各ピンのPWMの出力の大きさを決める
 pwm1 = GPIO.PWM(pin12, 1000)#pin12, 1000Hzのpwm
 pwm2 = GPIO.PWM(pin22, 1000)#pin22, 1000Hzのpwm
 
-〇始めは出力を0にする
+#〇始めは出力を0にする
 pwm1.start(0)#開始,初期出力0
 pwm2.start(0)#開始,初期出力0
 
@@ -56,10 +56,10 @@ def pwmOutput(start, stop, step, sleep, pwm):
 # programスタート
 print("いってらっしゃい！\n気をつけてね！")
 
-〇具体的な動作
+#〇具体的な動作
 try:
     while Input3 != 9:#9でない場合繰り替えす→9になると終了
-        screen.fill((0, 0, 0))　　　　　　　　←これはスクリーンの色を設定している 
+        screen.fill((0, 0, 0))　　　　　　　　←これはスクリーンの色を設定している
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -72,8 +72,8 @@ try:
                     Input3 = 9
                 else:
                     print("押されたキー = " + pygame.key.name(event.key))
-                    
-                    
+
+
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 1
                     PhaseM += 1
@@ -82,7 +82,7 @@ try:
                     InputM = 2
                     PhaseM += 1
                     print("反転")"""
-# 1                
+# 1
                 if pygame.key.name(event.key) == "up":　　　　　←upはキーボードの上矢印キー
                     Input1 = 1
                     Phase1 += 1
@@ -91,7 +91,7 @@ try:
                     Input1 = 2
                     Phase1 += 1
                     print("back")
-# 2                        
+# 2
                 if pygame.key.name(event.key) == "a":　　　　　 ←aはキーボードのaキー
                     Input2 = 1
                     Phase2 += 1
@@ -104,11 +104,11 @@ try:
                     Input2 = 2
                     Phase2 += 1
                     print("右回り")
-                
+
             if event.type == KEYUP:  # キーを離したとき
                 # ESCキーならスクリプトを終了
                 print("離したキー = " + pygame.key.name(event.key))
-                    
+
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 0
                     PhaseM -= 1
@@ -117,7 +117,7 @@ try:
                     InputM = 0
                     PhaseM -= 1
                     print("停止")"""
-# 1                
+# 1
                 if pygame.key.name(event.key) == "up":
                     Input1 = 0
                     Phase1 -= 1
@@ -126,7 +126,7 @@ try:
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
-# 2                    
+# 2
                 if pygame.key.name(event.key) == "a":
                     Input2 = 0
                     Phase2 -= 1
@@ -135,7 +135,7 @@ try:
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
-                    
+
             """pygame.display.update()
         if InputM == 0 or InputM == 9:#停止させる
             pwmOutput(VM, 0, -VM / 25, 0.02, pwmM)#pwm制御をする
@@ -156,7 +156,7 @@ try:
             GPIO.output(pinM1, GPIO.HIGH)#反転
             pwmOutput(VM, 100, (100 - VM) / 25, 0.02, pwmM)
             VM, RecordM = 100, 2"""
-                    
+
             pygame.display.update()
 # 1
         if Input1 == 0 or Input1 == 9:#停止させる
@@ -178,7 +178,7 @@ try:
             GPIO.output(pin11, GPIO.HIGH)#反転
             pwmOutput(V1, 40, (40 - V1) / 1, 0.02, pwm1)
             V1, Record1 = 40, 2
-            
+
 # 2
         if Input2 == 0 or Input2 == 9:#停止させる
             pwmOutput(V2, 0, -V2 / 1, 0.02, pwm2)#pwm制御をする
@@ -199,9 +199,9 @@ try:
             GPIO.output(pin21, GPIO.HIGH)#反転
             pwmOutput(V2, 100, (100 - V2) / 1, 0.02, pwm2)
             V2, Record2 = 100, 2
-        
-                    
-# プログラム強制終了時にモーターを止める                        
+
+
+# プログラム強制終了時にモーターを止める
 except KeyboardInterrupt:
     pass
 finally:
