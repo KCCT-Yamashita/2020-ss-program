@@ -3,9 +3,6 @@ import time
 from pygame.locals import *
 import pygame
 import sys
-import threading #並行処理
-from gpiozero import LED #Lチカ
-from time import sleep
 
 pygame.init()# Pygameを初期化
 screen = pygame.display.set_mode((400, 330))# 画面を作成
@@ -20,9 +17,6 @@ Input1, Input2, Input3 = 0, 0, 0
 V1, V2 = 0, 0
 Record1, Record2 = 0, 0
 Phase1, Phase2 = 0, 0
-#while文用の変数
-numR = 0
-numL = 0
 
 # ピンの設定 例)出力、入力
 GPIO.setmode(GPIO.BOARD)
@@ -34,9 +28,9 @@ GPIO.setup(pin21, GPIO.OUT)#黄色い線-正転・反転用(電流を送ると�
 GPIO.output(pin21, GPIO.LOW)
 GPIO.setup(pin22, GPIO.OUT)#白い線-pwm用(出力をそのまま変更)
 GPIO.output(pin22, GPIO.LOW)
-#LEDのGPIOピンの設定
-GPIO.setup(11,GPIO.OUT)
-GPIO.setup(12,GPIO.OUT)
+#LEDを接続したGPIOピンの定義
+GPIO.setup(11, GPIO.OUT)#オレンジ色の線-チカチカ用
+GPIO.setup(12, GPIO.OUT)#オレンジ色の線-チカチカ用
 
 pwm1 = GPIO.PWM(pin12, 1000)#pin12, 1000Hzのpwm
 pwm2 = GPIO.PWM(pin22, 1000)#pin22, 1000Hzのpwm
@@ -44,7 +38,7 @@ pwm2 = GPIO.PWM(pin22, 1000)#pin22, 1000Hzのpwm
 pwm1.start(0)#開始,初期出力0
 pwm2.start(0)#開始,初期出力0
 
-#　pwmの式(回転速度の変更を滑らかにする)
+#　pwmの式(回転速度の変化をなめらかにする)
 def pwmOutput(start, stop, step, sleep, pwm):
     if step == 0: return#速度を変えないときエラーが出ないようにする
     for i in range(start, stop + (1 if step > 0 else -1), int(step)):
@@ -52,12 +46,11 @@ def pwmOutput(start, stop, step, sleep, pwm):
         time.sleep(sleep)
 
 # programスタート
-print("Start")
+print("いってらっしゃい！\n気をつけてね！")
 
-#キーボードで操作
 try:
     while Input3 != 9:#9でない場合繰り替えす→9になると終了
-        screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0)) 
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -66,12 +59,12 @@ try:
                 # ESCキーならスクリプトを終了
                 if event.key == K_ESCAPE:
                     pygame.quit()
-                    print("Finish")
+                    print("おかえり！\n無事でよかった！")
                     Input3 = 9
                 else:
                     print("押されたキー = " + pygame.key.name(event.key))
-
-
+                    
+                    
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 1
                     PhaseM += 1
@@ -80,29 +73,38 @@ try:
                     InputM = 2
                     PhaseM += 1
                     print("反転")"""
-
-                if pygame.key.name(event.key) == "w":
+# 1                
+                if pygame.key.name(event.key) == "up":
                     Input1 = 1
                     Phase1 += 1
-                    print("前進")
-                if pygame.key.name(event.key) == "s":
+                    print("straight")
+                if pygame.key.name(event.key) == "down":
                     Input1 = 2
                     Phase1 += 1
-                    print("後進")
-
+                    print("back")
+# 2                        
                 if pygame.key.name(event.key) == "a":
                     Input2 = 1
                     Phase2 += 1
                     print("左回り")
+                        
                 if pygame.key.name(event.key) == "d":
                     Input2 = 2
                     Phase2 += 1
                     print("右回り")
+                    
+                if pygame.key.name(event.key) == "q":
+                    print("左ライトon")
+                    GPIO.output(11, True)
 
+                if pygame.key.name(event.key) == "e":
+                    GPIO.output(12, True)
+                    print("右ライトon")
+                        
             if event.type == KEYUP:  # キーを離したとき
                 # ESCキーならスクリプトを終了
                 print("離したキー = " + pygame.key.name(event.key))
-
+                    
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 0
                     PhaseM -= 1
@@ -111,16 +113,16 @@ try:
                     InputM = 0
                     PhaseM -= 1
                     print("停止")"""
-
-                if pygame.key.name(event.key) == "w":
+# 1                
+                if pygame.key.name(event.key) == "up":
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
-                if pygame.key.name(event.key) == "s":
+                if pygame.key.name(event.key) == "down":
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
-
+# 2                    
                 if pygame.key.name(event.key) == "a":
                     Input2 = 0
                     Phase2 -= 1
@@ -129,7 +131,15 @@ try:
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
-
+                        
+                if pygame.key.name(event.key) == "q":
+                    print("左ライトoff")
+                    GPIO.output(11, False)
+                    
+                if pygame.key.name(event.key) == "e":
+                    print("右ライトoff")
+                    GPIO.output(12, False)
+                    
             """pygame.display.update()
         if InputM == 0 or InputM == 9:#停止させる
             pwmOutput(VM, 0, -VM / 25, 0.02, pwmM)#pwm制御をする
@@ -150,9 +160,9 @@ try:
             GPIO.output(pinM1, GPIO.HIGH)#反転
             pwmOutput(VM, 100, (100 - VM) / 25, 0.02, pwmM)
             VM, RecordM = 100, 2"""
-
+                    
             pygame.display.update()
-# 11111111
+# 1
         if Input1 == 0 or Input1 == 9:#停止させる
             pwmOutput(V1, 0, -V1 / 1, 0.02, pwm1)#pwm制御をする
             #V1/25(回転していたら100/25で4)ずつ速度を落とす
@@ -172,7 +182,7 @@ try:
             GPIO.output(pin11, GPIO.HIGH)#反転
             pwmOutput(V1, 40, (40 - V1) / 1, 0.02, pwm1)
             V1, Record1 = 40, 2
-
+            
 # 2
         if Input2 == 0 or Input2 == 9:#停止させる
             pwmOutput(V2, 0, -V2 / 1, 0.02, pwm2)#pwm制御をする
@@ -193,44 +203,9 @@ try:
             GPIO.output(pin21, GPIO.HIGH)#反転
             pwmOutput(V2, 100, (100 - V2) / 1, 0.02, pwm2)
             V2, Record2 = 100, 2
-
-
-        #Lチカ
-        def funcE():
-            if event.type == KEYDOWN:
-                if pygame.key.name(event.key) == "e":
-                    print("右ライト ON")
-                    while numR == 0:
-                        GPIO.output(12,GPIO.HIGH)
-                        time.sleep(0.4)
-                        GPIO.output(12,GPIO.LOW)
-                        time.sleep(0.4)
-                        if event.type == KEYUP:
-                            if pygame.key.name(event.key) == "e":
-                                numR = 1
-                                numR = 0
-
-        def funcQ():
-            if event.type == KEYUP:
-                if pygame.key.name(event.key) == "q":
-                    print("左ライト ON")
-                    while numL == 0:
-                        GPIO.output(11,GPIO.HIGH)
-                        time.sleep(0.4)
-                        GPIO.output(11,GPIO.LOW)
-                        time.sleep(0.4)
-                        if event.type == KEYUP:
-                            if pygame.key.name(event.key) == "q":
-                                numL = 1
-                                numL = 0
-
-        if __name__ == __main__:
-                thread_1 = threading.Thread(target=func1)
-                thread_2 = threading.Thread(target=func2)
-                thread_1.start()
-                thread_2.start()
-
-# プログラム強制終了時にモーターを止める
+        
+                    
+# プログラム強制終了時にモーターを止める                        
 except KeyboardInterrupt:
     pass
 finally:
