@@ -205,10 +205,10 @@ try:
                         time.sleep(0.4)
                         GPIO.output(12,GPIO.LOW)
                         time.sleep(0.4)
-                        if event.type == KEYUP:
-                            if pygame.key.name(event.key) == "e":
-                                numR = 1
-                                numR = 0
+            if event.type == KEYUP:
+                if pygame.key.name(event.key) == "e":
+                    numR = 1
+                    numR = 0
 
         def funcQ():
             if event.type == KEYUP:
@@ -219,10 +219,10 @@ try:
                         time.sleep(0.4)
                         GPIO.output(11,GPIO.LOW)
                         time.sleep(0.4)
-                        if event.type == KEYUP:
-                            if pygame.key.name(event.key) == "q":
-                                numL = 1
-                                numL = 0
+            if event.type == KEYUP:
+                if pygame.key.name(event.key) == "q":
+                    numL = 1
+                    numL = 0
 
         if __name__ == __main__:
                 thread_1 = threading.Thread(target=func1)
