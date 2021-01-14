@@ -3,9 +3,7 @@ import time
 from pygame.locals import *
 import pygame
 import sys
-import threading #並行処理
-from gpiozero import LED #Lチカ
-from time import sleep
+from pyPS4Controller.controller import Controller
 
 pygame.init()# Pygameを初期化
 screen = pygame.display.set_mode((400, 330))# 画面を作成
@@ -20,9 +18,6 @@ Input1, Input2, Input3 = 0, 0, 0
 V1, V2 = 0, 0
 Record1, Record2 = 0, 0
 Phase1, Phase2 = 0, 0
-#while文用の変数
-numR = 0
-numL = 0
 
 # ピンの設定 例)出力、入力
 GPIO.setmode(GPIO.BOARD)
@@ -54,7 +49,6 @@ def pwmOutput(start, stop, step, sleep, pwm):
 # programスタート
 print("Start")
 
-#キーボードで操作
 try:
     while Input3 != 9:#9でない場合繰り替えす→9になると終了
         screen.fill((0, 0, 0))
@@ -85,6 +79,7 @@ try:
                     Input1 = 1
                     Phase1 += 1
                     print("前進")
+
                 if pygame.key.name(event.key) == "s":
                     Input1 = 2
                     Phase1 += 1
@@ -94,10 +89,19 @@ try:
                     Input2 = 1
                     Phase2 += 1
                     print("左回り")
+
                 if pygame.key.name(event.key) == "d":
                     Input2 = 2
                     Phase2 += 1
                     print("右回り")
+
+                if pygame.key.name(event.key) == "left":
+                    print("左ライトon")
+
+                    GPIO.output(11, True)
+                if pygame.key.name(event.key) == "right":
+                    GPIO.output(12, True)
+                    print("右ライトon")
 
             if event.type == KEYUP:  # キーを離したとき
                 # ESCキーならスクリプトを終了
@@ -116,6 +120,7 @@ try:
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
+
                 if pygame.key.name(event.key) == "s":
                     Input1 = 0
                     Phase1 -= 1
@@ -125,10 +130,19 @@ try:
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
+
                 if pygame.key.name(event.key) == "d":
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
+
+                if pygame.key.name(event.key) == "left":
+                    print("左ライトoff")
+
+                    GPIO.output(11, False)
+                if pygame.key.name(event.key) == "right":
+                    print("右ライトoff")
+                    GPIO.output(12, False)
 
             """pygame.display.update()
         if InputM == 0 or InputM == 9:#停止させる
@@ -194,41 +208,6 @@ try:
             pwmOutput(V2, 100, (100 - V2) / 1, 0.02, pwm2)
             V2, Record2 = 100, 2
 
-
-        #Lチカ
-        def funcE():
-            if event.type == KEYDOWN:
-                if pygame.key.name(event.key) == "e":
-                    print("右ライト ON")
-                    while numR == 0:
-                        GPIO.output(12,GPIO.HIGH)
-                        time.sleep(0.4)
-                        GPIO.output(12,GPIO.LOW)
-                        time.sleep(0.4)
-            if event.type == KEYUP:
-                if pygame.key.name(event.key) == "e":
-                    numR = 1
-                    numR = 0
-
-        def funcQ():
-            if event.type == KEYUP:
-                if pygame.key.name(event.key) == "q":
-                    print("左ライト ON")
-                    while numL == 0:
-                        GPIO.output(11,GPIO.HIGH)
-                        time.sleep(0.4)
-                        GPIO.output(11,GPIO.LOW)
-                        time.sleep(0.4)
-            if event.type == KEYUP:
-                if pygame.key.name(event.key) == "q":
-                    numL = 1
-                    numL = 0
-
-        if __name__ == __main__:
-                thread_1 = threading.Thread(target=func1)
-                thread_2 = threading.Thread(target=func2)
-                thread_1.start()
-                thread_2.start()
 
 # プログラム強制終了時にモーターを止める
 except KeyboardInterrupt:

@@ -50,7 +50,7 @@ print("いってらっしゃい！\n気をつけてね！")
 
 try:
     while Input3 != 9:#9でない場合繰り替えす→9になると終了
-        screen.fill((0, 0, 0)) 
+        screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -63,8 +63,8 @@ try:
                     Input3 = 9
                 else:
                     print("押されたキー = " + pygame.key.name(event.key))
-                    
-                    
+
+
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 1
                     PhaseM += 1
@@ -73,26 +73,27 @@ try:
                     InputM = 2
                     PhaseM += 1
                     print("反転")"""
-# 1                
+# 1
                 if pygame.key.name(event.key) == "up":
                     Input1 = 1
                     Phase1 += 1
                     print("straight")
+
                 if pygame.key.name(event.key) == "down":
                     Input1 = 2
                     Phase1 += 1
                     print("back")
-# 2                        
+# 2
                 if pygame.key.name(event.key) == "a":
                     Input2 = 1
                     Phase2 += 1
                     print("左回り")
-                        
+
                 if pygame.key.name(event.key) == "d":
                     Input2 = 2
                     Phase2 += 1
                     print("右回り")
-                    
+
                 if pygame.key.name(event.key) == "q":
                     print("左ライトon")
                     GPIO.output(11, True)
@@ -100,11 +101,11 @@ try:
                 if pygame.key.name(event.key) == "e":
                     GPIO.output(12, True)
                     print("右ライトon")
-                        
+
             if event.type == KEYUP:  # キーを離したとき
                 # ESCキーならスクリプトを終了
                 print("離したキー = " + pygame.key.name(event.key))
-                    
+
                 """if pygame.key.name(event.key) == "ボタン()":
                     InputM = 0
                     PhaseM -= 1
@@ -113,33 +114,35 @@ try:
                     InputM = 0
                     PhaseM -= 1
                     print("停止")"""
-# 1                
+# 1
                 if pygame.key.name(event.key) == "up":
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
+
                 if pygame.key.name(event.key) == "down":
                     Input1 = 0
                     Phase1 -= 1
                     print("停止")
-# 2                    
+# 2
                 if pygame.key.name(event.key) == "a":
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
+                    
                 if pygame.key.name(event.key) == "d":
                     Input2 = 0
                     Phase2 -= 1
                     print("停止")
-                        
+
                 if pygame.key.name(event.key) == "q":
                     print("左ライトoff")
                     GPIO.output(11, False)
-                    
+
                 if pygame.key.name(event.key) == "e":
                     print("右ライトoff")
                     GPIO.output(12, False)
-                    
+
             """pygame.display.update()
         if InputM == 0 or InputM == 9:#停止させる
             pwmOutput(VM, 0, -VM / 25, 0.02, pwmM)#pwm制御をする
@@ -160,7 +163,7 @@ try:
             GPIO.output(pinM1, GPIO.HIGH)#反転
             pwmOutput(VM, 100, (100 - VM) / 25, 0.02, pwmM)
             VM, RecordM = 100, 2"""
-                    
+
             pygame.display.update()
 # 1
         if Input1 == 0 or Input1 == 9:#停止させる
@@ -182,7 +185,7 @@ try:
             GPIO.output(pin11, GPIO.HIGH)#反転
             pwmOutput(V1, 40, (40 - V1) / 1, 0.02, pwm1)
             V1, Record1 = 40, 2
-            
+
 # 2
         if Input2 == 0 or Input2 == 9:#停止させる
             pwmOutput(V2, 0, -V2 / 1, 0.02, pwm2)#pwm制御をする
@@ -203,9 +206,9 @@ try:
             GPIO.output(pin21, GPIO.HIGH)#反転
             pwmOutput(V2, 100, (100 - V2) / 1, 0.02, pwm2)
             V2, Record2 = 100, 2
-        
-                    
-# プログラム強制終了時にモーターを止める                        
+
+
+# プログラム強制終了時にモーターを止める
 except KeyboardInterrupt:
     pass
 finally:
