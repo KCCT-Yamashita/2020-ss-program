@@ -7,7 +7,7 @@ from pyPS4Controller.controller import Controller
 
 pygame.init()# Pygameを初期化
 screen = pygame.display.set_mode((400, 330))# 画面を作成
-pygame.display.set_caption("keyboard event")# タイトルを作成
+pygame.display.set_caption("PS4 event")# タイトルを作成
 
 # モータードライバーを接続したGPIOピンの定義(1:GPIO 2:GPIO 3:GND)
 pin11, pin12, pin13 = 33, 35, 34
@@ -29,9 +29,9 @@ GPIO.setup(pin21, GPIO.OUT)#黄色い線-正転・反転用(電流を送ると�
 GPIO.output(pin21, GPIO.LOW)
 GPIO.setup(pin22, GPIO.OUT)#白い線-pwm用(出力をそのまま変更)
 GPIO.output(pin22, GPIO.LOW)
-#LEDのGPIOピンの設定
-GPIO.setup(11,GPIO.OUT)
-GPIO.setup(12,GPIO.OUT)
+#LEDを接続したGPIOピンの定義
+GPIO.setup(11, GPIO.OUT)#オレンジ色の線-チカチカ用
+GPIO.setup(12, GPIO.OUT)#オレンジ色の線-チカチカ用
 
 pwm1 = GPIO.PWM(pin12, 1000)#pin12, 1000Hzのpwm
 pwm2 = GPIO.PWM(pin22, 1000)#pin22, 1000Hzのpwm
@@ -39,7 +39,7 @@ pwm2 = GPIO.PWM(pin22, 1000)#pin22, 1000Hzのpwm
 pwm1.start(0)#開始,初期出力0
 pwm2.start(0)#開始,初期出力0
 
-#　pwmの式(回転速度の変更を滑らかにする)
+#　pwmの式(回転速度の変化をなめらかにする)
 def pwmOutput(start, stop, step, sleep, pwm):
     if step == 0: return#速度を変えないときエラーが出ないようにする
     for i in range(start, stop + (1 if step > 0 else -1), int(step)):
@@ -47,103 +47,70 @@ def pwmOutput(start, stop, step, sleep, pwm):
         time.sleep(sleep)
 
 # programスタート
-print("Start")
+print("いってらっしゃい！\n気をつけてね！")
 
 try:
-    while Input3 != 9:#9でない場合繰り替えす→9になると終了
+    while PS4.getButtonClick(PS) != 1:#9でない場合繰り替えす→9になると終了
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN:  # キーを押したとき
-                # ESCキーならスクリプトを終了
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    print("Finish")
-                    Input3 = 9
-                else:
-                    print("押されたキー = " + pygame.key.name(event.key))
-
-
-                """if pygame.key.name(event.key) == "ボタン()":
-                    InputM = 1
-                    PhaseM += 1
-                    print("正転")
-                if pygame.key.name(event.key) == "ボタン()":
-                    InputM = 2
-                    PhaseM += 1
-                    print("反転")"""
-
-                if pygame.key.name(event.key) == "w":
+   
+                if PS4.getButtonPress(UP) == 1:
                     Input1 = 1
                     Phase1 += 1
-                    print("前進")
-
-                if pygame.key.name(event.key) == "s":
+                    print("straight")
+                if PS4.getButtonPress(DOWN) == 1:
                     Input1 = 2
                     Phase1 += 1
-                    print("後進")
-
-                if pygame.key.name(event.key) == "a":
+                    print("back")
+                        
+                if PS4.getButtonPress(L1) == 1:
                     Input2 = 1
                     Phase2 += 1
                     print("左回り")
-
-                if pygame.key.name(event.key) == "d":
+                        
+                if PS4.getButtonPress(R1) == 1:
                     Input2 = 2
                     Phase2 += 1
                     print("右回り")
-
-                if pygame.key.name(event.key) == "left":
+                    
+                if PS4.getButtonPress(LEFT) == 1:
                     print("左ライトon")
-
                     GPIO.output(11, True)
-                if pygame.key.name(event.key) == "right":
+
+                if PS4.getButtonPress(CIRCLE) == 1:
                     GPIO.output(12, True)
                     print("右ライトon")
-
-            if event.type == KEYUP:  # キーを離したとき
-                # ESCキーならスクリプトを終了
-                print("離したキー = " + pygame.key.name(event.key))
-
-                """if pygame.key.name(event.key) == "ボタン()":
-                    InputM = 0
-                    PhaseM -= 1
-                    print("停止")
-                if pygame.key.name(event.key) == "ボタン()":
-                    InputM = 0
-                    PhaseM -= 1
-                    print("停止")"""
-
-                if pygame.key.name(event.key) == "w":
+                
+                if PS4.getButtonPress(UP) == 0:
                     Input1 = 0
                     Phase1 -= 1
-                    print("停止")
-
-                if pygame.key.name(event.key) == "s":
+                    print("straight")
+                if PS4.getButtonPress(DOWN) == 0:
                     Input1 = 0
                     Phase1 -= 1
-                    print("停止")
-
-                if pygame.key.name(event.key) == "a":
+                    print("back")
+                        
+                if PS4.getButtonPress(L1) == 0:
                     Input2 = 0
                     Phase2 -= 1
-                    print("停止")
-
-                if pygame.key.name(event.key) == "d":
+                    print("左回り")
+                        
+                if PS4.getButtonPress(R1) == 0:
                     Input2 = 0
                     Phase2 -= 1
-                    print("停止")
-
-                if pygame.key.name(event.key) == "left":
-                    print("左ライトoff")
-
+                    print("右回り")
+                    
+                if PS4.getButtonPress(LEFT) == 0:
+                    print("左ライトon")
                     GPIO.output(11, False)
-                if pygame.key.name(event.key) == "right":
-                    print("右ライトoff")
-                    GPIO.output(12, False)
 
+                if PS4.getButtonPress(CIRCLE) == 0:
+                    GPIO.output(12, False)
+                    print("右ライトon")
+                    
             """pygame.display.update()
         if InputM == 0 or InputM == 9:#停止させる
             pwmOutput(VM, 0, -VM / 25, 0.02, pwmM)#pwm制御をする
@@ -164,9 +131,9 @@ try:
             GPIO.output(pinM1, GPIO.HIGH)#反転
             pwmOutput(VM, 100, (100 - VM) / 25, 0.02, pwmM)
             VM, RecordM = 100, 2"""
-
+                    
             pygame.display.update()
-# 11111111
+# 1
         if Input1 == 0 or Input1 == 9:#停止させる
             pwmOutput(V1, 0, -V1 / 1, 0.02, pwm1)#pwm制御をする
             #V1/25(回転していたら100/25で4)ずつ速度を落とす
@@ -186,7 +153,7 @@ try:
             GPIO.output(pin11, GPIO.HIGH)#反転
             pwmOutput(V1, 40, (40 - V1) / 1, 0.02, pwm1)
             V1, Record1 = 40, 2
-
+            
 # 2
         if Input2 == 0 or Input2 == 9:#停止させる
             pwmOutput(V2, 0, -V2 / 1, 0.02, pwm2)#pwm制御をする
@@ -207,10 +174,11 @@ try:
             GPIO.output(pin21, GPIO.HIGH)#反転
             pwmOutput(V2, 100, (100 - V2) / 1, 0.02, pwm2)
             V2, Record2 = 100, 2
-
-
-# プログラム強制終了時にモーターを止める
-except KeyboardInterrupt:
+        
+    if PS4.getButtonClick(PS) == 1:
+        print("おかえり！\n無事でよかった！")
+# プログラム強制終了時にモーターを止める                        
+except:
     pass
 finally:
     pwm1.stop()

@@ -1,5 +1,5 @@
-import gpiozero import LED
-import time import sleep
+from gpiozero import LED
+from time import sleep
 
 #LEDの変数
 led = LED(3) #GPIOの番号
